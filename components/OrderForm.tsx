@@ -28,8 +28,7 @@ export default function OrderForm() {
     setSubmitting(true)
 
     const formData = new FormData(e.currentTarget)
-    formData.set('product', product.name)
-    formData.set('total_amount', total.toString())
+    formData.set('product_id', product.id)
     formData.set('shipping_method', shipping)
 
     const result = await createOrder(formData)
