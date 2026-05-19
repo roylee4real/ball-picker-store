@@ -19,15 +19,26 @@ export default function Navbar() {
   }, [])
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
+    let mounted = true
+    supabase.auth.getUser().then(({ data }) => {
+      if (mounted) setUser(data.user)
+    })
     const { data: listener } = supabase.auth.onAuthStateChange((_, session) => {
       setUser(session?.user ?? null)
     })
-    return () => listener.subscription.unsubscribe()
+    return () => {
+      mounted = false
+      listener.subscription.unsubscribe()
+    }
   }, [])
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    try {
+      await supabase.auth.signOut()
+    } catch (err) {
+      console.error('Logout failed:', err)
+    }
+    setMenuOpen(false)
     router.refresh()
     router.push('/')
   }
@@ -71,17 +82,17 @@ export default function Navbar() {
       </button>
       {menuOpen && (
         <div className="absolute top-full left-0 right-0 bg-black/95 border-b border-neutral-800 flex flex-col gap-4 p-6 md:hidden">
-          <Link href="/" className={linkClass}>首页</Link>
-          <Link href="/product" className={linkClass}>产品</Link>
+          <Link href="/" className={linkClass} onClick={() => setMenuOpen(false)}>首页</Link>
+          <Link href="/product" className={linkClass} onClick={() => setMenuOpen(false)}>产品</Link>
           {user ? (
             <>
-              <Link href="/orders" className={linkClass}>我的订单</Link>
+              <Link href="/orders" className={linkClass} onClick={() => setMenuOpen(false)}>我的订单</Link>
               <button onClick={handleLogout} className={`${linkClass} text-left`}>退出</button>
             </>
           ) : (
             <>
-              <Link href="/login" className={linkClass}>登录</Link>
-              <Link href="/register" className={linkClass}>注册</Link>
+              <Link href="/login" className={linkClass} onClick={() => setMenuOpen(false)}>登录</Link>
+              <Link href="/register" className={linkClass} onClick={() => setMenuOpen(false)}>注册</Link>
             </>
           )}
         </div>
