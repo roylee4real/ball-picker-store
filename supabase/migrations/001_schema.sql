@@ -1,7 +1,7 @@
 -- Create profiles table (extends Supabase auth.users)
 CREATE TABLE public.profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
-  email TEXT,
+  email TEXT NOT NULL,
   name TEXT,
   phone TEXT,
   is_admin BOOLEAN DEFAULT false,
@@ -16,10 +16,25 @@ CREATE POLICY "Users can read own profile"
   ON public.profiles FOR SELECT
   USING (auth.uid() = id);
 
--- Users can update their own profile
+-- Users can update their own profile (but cannot set is_admin)
 CREATE POLICY "Users can update own profile"
   ON public.profiles FOR UPDATE
-  USING (auth.uid() = id);
+  USING (auth.uid() = id)
+  WITH CHECK (
+    auth.uid() = id
+    AND is_admin = false
+  );
+
+-- Admins can update any profile (including setting is_admin)
+CREATE POLICY "Admins can update any profile"
+  ON public.profiles FOR UPDATE
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid() AND is_admin = true
+    )
+  )
+  WITH CHECK (true);
 
 -- Users can insert their own profile
 CREATE POLICY "Users can insert own profile"
@@ -103,13 +118,16 @@ CREATE TRIGGER update_orders_modtime
 
 -- Trigger to auto-create profile on user signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
   INSERT INTO public.profiles (id, email)
   VALUES (NEW.id, NEW.email);
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql;
 
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
