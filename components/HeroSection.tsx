@@ -19,7 +19,7 @@ export default function HeroSection() {
           专业<span className="text-blue-400">捡球</span>器
         </h1>
         <p className="text-lg md:text-xl text-neutral-400 mb-10 max-w-xl mx-auto">
-          网球 · 乒乓球 — 高效训练，一器搞定。轻量铝合金材质，一次收集 20+ 个球。
+          网球 · 乒乓球 — 高效训练，一器搞定。PVC+金属材质，一次收集 30+ 个球。
         </p>
         <div className="flex gap-4 justify-center">
           <Link

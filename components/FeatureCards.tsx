@@ -3,10 +3,10 @@
 import { motion } from 'framer-motion'
 
 const features = [
-  { icon: '⚡', title: '高效捡球', desc: '一次收集 20+ 球，训练不中断' },
-  { icon: '🪶', title: '轻量耐用', desc: '铝合金材质，1.2kg 轻便携带' },
-  { icon: '🖐️', title: '人体工学', desc: '舒适握把，久握不累手' },
-  { icon: '🛡️', title: '防锈处理', desc: '表面阳极氧化，室内外通用' },
+  { icon: '⚡', title: '高效捡球', desc: '一次收集 30+ 球，训练不中断' },
+  { icon: '🏗️', title: 'PVC+金属材质', desc: '坚固耐用，1kg 轻便携带' },
+  { icon: '🖐️', title: '轻量化握把', desc: '舒适握持，久握不累手' },
+  { icon: '📦', title: '一物多用', desc: '捡球后可当球框使用' },
 ]
 
 export default function FeatureCards() {

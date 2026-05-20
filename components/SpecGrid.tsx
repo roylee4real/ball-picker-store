@@ -3,10 +3,10 @@
 import { motion } from 'framer-motion'
 
 const specs = [
-  { label: '重量', value: '1.2 kg' },
+  { label: '重量', value: '1 kg' },
   { label: '长度', value: '85 cm' },
-  { label: '材质', value: '铝合金' },
-  { label: '容量', value: '20+ 球' },
+  { label: '材质', value: 'PVC+金属' },
+  { label: '容量', value: '30+ 球' },
 ]
 
 export default function SpecGrid() {

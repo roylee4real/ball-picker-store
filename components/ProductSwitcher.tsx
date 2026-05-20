@@ -1,8 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { PRODUCTS } from '@/lib/constants'
+
+const productImages: Record<string, string> = {
+  'tennis-ball-picker': '/images/pingpong01.jpg',
+  'pingpong-ball-picker': '/images/pingpong01.jpg',
+}
 
 export default function ProductSwitcher() {
   const [active, setActive] = useState(0)
@@ -19,8 +25,14 @@ export default function ProductSwitcher() {
           animate={{ opacity: 1 }}
           className="relative z-10 text-center px-4"
         >
-          <div className="w-80 h-80 bg-neutral-800 rounded-full mx-auto mb-10 flex items-center justify-center text-8xl">
-            🎾
+          <div className="w-80 h-80 relative mx-auto mb-10 overflow-hidden rounded-2xl">
+            <Image
+              src={productImages[product.id]}
+              alt={product.name}
+              fill
+              className="object-cover"
+              priority
+            />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-4">{product.name}</h1>
           <p className="text-lg text-neutral-400 mb-8">{product.description}</p>
