@@ -16,6 +16,11 @@ const productImages: Record<string, string[]> = {
   ],
 }
 
+const productBg: Record<string, string> = {
+  'tennis-ball-picker': '/images/post02.jpg',
+  'pingpong-ball-picker': '/images/post01.png',
+}
+
 const productVideo: Record<string, string | null> = {
   'tennis-ball-picker': null,
   'pingpong-ball-picker': '/images/pingpongvd.mp4',
@@ -54,8 +59,26 @@ export default function ProductSwitcher() {
       </div>
 
       {/* Screen 1: Image Gallery */}
-      <section className="min-h-screen flex items-center justify-center relative pt-20">
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 to-black" />
+      <section className="min-h-screen flex items-center justify-center relative pt-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-neutral-900/95 to-black/95" />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={product.id + '-bg'}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.15 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+            className="absolute inset-0 z-0"
+          >
+            <Image
+              src={productBg[product.id]}
+              alt=""
+              fill
+              className="object-cover"
+              priority
+            />
+          </motion.div>
+        </AnimatePresence>
         <div className="relative z-10 text-center px-4 w-full max-w-2xl mx-auto">
           {images.length > 0 ? (
             <>

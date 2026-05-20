@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
@@ -8,6 +9,26 @@ export default function HeroSection() {
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 to-black" />
       <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_center,_#ffffff10_0%,_transparent_70%)]" />
+
+      {/* Decorative side posters */}
+      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1/4 max-w-[280px] opacity-40 hover:opacity-60 transition-opacity duration-500 z-[1] pointer-events-none">
+        <Image
+          src="/images/postA.jpg"
+          alt=""
+          width={400}
+          height={600}
+          className="w-full h-auto"
+        />
+      </div>
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1/4 max-w-[280px] opacity-40 hover:opacity-60 transition-opacity duration-500 z-[1] pointer-events-none">
+        <Image
+          src="/images/postB.jpg"
+          alt=""
+          width={400}
+          height={600}
+          className="w-full h-auto"
+        />
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -40,7 +61,7 @@ export default function HeroSection() {
       <motion.div
         animate={{ y: [0, 10, 0] }}
         transition={{ repeat: Infinity, duration: 2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-neutral-600"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-neutral-600 z-10"
       >
         ↓ 向下滚动
       </motion.div>
