@@ -1,6 +1,8 @@
 import { createServerSupabase } from '@/lib/supabase/server'
 import OrderStatusBadge from '@/components/OrderStatusBadge'
 
+export const dynamic = 'force-dynamic'
+
 export default function OrdersPage() {
   return (
     <div className="min-h-screen pt-24 px-4 pb-20">

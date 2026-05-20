@@ -3,6 +3,8 @@ import { createServerSupabase } from '@/lib/supabase/server'
 import AdminStats from '@/components/AdminStats'
 import AdminOrderTable from '@/components/AdminOrderTable'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminPage() {
   const supabase = await createServerSupabase()
   const { data: { user } } = await supabase.auth.getUser()
