@@ -1,15 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabase } from '@/lib/supabase/server'
+import { createServerClient } from '@supabase/ssr'
+import { createAdminSupabase } from '@/lib/supabase/admin'
 
 export async function PATCH(request: NextRequest) {
-  const supabase = await createServerSupabase()
+  // Verify the user is authenticated using request cookies
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return request.cookies.getAll() },
+        setAll() {},
+      },
+    }
+  )
+
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
     return NextResponse.json({ error: '未登录' }, { status: 401 })
   }
 
-  const { data: profile } = await supabase
+  // Use admin client to bypass RLS for profile check
+  const adminDb = createAdminSupabase()
+  const { data: profile } = await adminDb
     .from('profiles')
     .select('is_admin')
     .eq('id', user.id)
@@ -21,7 +35,7 @@ export async function PATCH(request: NextRequest) {
 
   const { orderId, status } = await request.json()
 
-  const { error } = await supabase
+  const { error } = await adminDb
     .from('orders')
     .update({ status })
     .eq('id', orderId)

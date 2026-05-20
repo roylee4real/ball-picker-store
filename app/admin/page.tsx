@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabase } from '@/lib/supabase/server'
+import { createAdminSupabase } from '@/lib/supabase/admin'
 import AdminStats from '@/components/AdminStats'
 import AdminOrderTable from '@/components/AdminOrderTable'
 
@@ -13,7 +14,9 @@ export default async function AdminPage() {
     redirect('/login?redirect=/admin')
   }
 
-  const { data: profile } = await supabase
+  const adminDb = createAdminSupabase()
+
+  const { data: profile } = await adminDb
     .from('profiles')
     .select('is_admin')
     .eq('id', user.id)
@@ -25,17 +28,12 @@ export default async function AdminPage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2">无权限访问</h1>
           <p className="text-neutral-400">您不是管理员</p>
-          <div className="mt-6 p-4 bg-neutral-900 rounded-lg text-left text-sm font-mono space-y-1 max-w-lg mx-auto">
-            <p className="text-neutral-500">调试信息（稍后移除）：</p>
-            <p>Auth User ID: <span className="text-blue-400">{user.id}</span></p>
-            <p>Profile 查询结果: <span className={profile ? 'text-green-400' : 'text-red-400'}>{profile ? JSON.stringify(profile) : 'null（RLS 可能拦截）'}</span></p>
-          </div>
         </div>
       </div>
     )
   }
 
-  const { data: orders } = await supabase
+  const { data: orders } = await adminDb
     .from('orders')
     .select('*')
     .order('created_at', { ascending: false })
