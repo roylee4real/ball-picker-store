@@ -2,42 +2,177 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { PRODUCTS } from '@/lib/constants'
 
-const productImages: Record<string, string> = {
-  'tennis-ball-picker': '/images/pingpong01.jpg',
-  'pingpong-ball-picker': '/images/pingpong01.jpg',
+const productImages: Record<string, string[]> = {
+  'tennis-ball-picker': [],
+  'pingpong-ball-picker': [
+    '/images/pingpong01.jpg',
+    '/images/pingpong02.jpg',
+    '/images/pingpong03.jpg',
+    '/images/pingpong04.jpg',
+  ],
+}
+
+const productVideo: Record<string, string | null> = {
+  'tennis-ball-picker': null,
+  'pingpong-ball-picker': '/images/pingpongvd.mp4',
 }
 
 export default function ProductSwitcher() {
-  const [active, setActive] = useState(0)
+  const [active, setActive] = useState(1) // default to pingpong since it has images
+  const [imgIndex, setImgIndex] = useState(0)
+  const [showVideo, setShowVideo] = useState(false)
+
   const product = PRODUCTS[active]
+  const images = productImages[product.id]
+  const video = productVideo[product.id]
+
+  const nextImage = () => setImgIndex((prev) => (prev + 1) % images.length)
+  const prevImage = () => setImgIndex((prev) => (prev - 1 + images.length) % images.length)
 
   return (
     <div className="min-h-screen">
-      {/* Screen 1: Hero image */}
-      <section className="min-h-screen flex items-center justify-center relative">
+      {/* Product tabs */}
+      <div className="fixed top-20 left-0 right-0 z-40 flex justify-center">
+        <div className="bg-neutral-900/80 backdrop-blur-sm border border-neutral-800 rounded-full p-1 flex">
+          {PRODUCTS.map((p, i) => (
+            <button
+              key={p.id}
+              onClick={() => { setActive(i); setImgIndex(0); setShowVideo(false) }}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+                i === active ? 'bg-white text-black' : 'text-neutral-400 hover:text-white'
+              }`}
+            >
+              {p.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Screen 1: Image Gallery */}
+      <section className="min-h-screen flex items-center justify-center relative pt-20">
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 to-black" />
-        <motion.div
-          key={product.id + '-hero'}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="relative z-10 text-center px-4"
-        >
-          <div className="w-80 h-80 relative mx-auto mb-10 overflow-hidden rounded-2xl">
-            <Image
-              src={productImages[product.id]}
-              alt={product.name}
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">{product.name}</h1>
-          <p className="text-lg text-neutral-400 mb-8">{product.description}</p>
-          <div className="text-3xl font-bold">¥{product.price}</div>
-        </motion.div>
+        <div className="relative z-10 text-center px-4 w-full max-w-2xl mx-auto">
+          {images.length > 0 ? (
+            <>
+              {/* Main image / video */}
+              <div className="relative w-full aspect-square max-w-lg mx-auto mb-8 overflow-hidden rounded-2xl bg-neutral-900">
+                <AnimatePresence mode="wait">
+                  {showVideo && video ? (
+                    <motion.div
+                      key="video"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="w-full h-full"
+                    >
+                      <video
+                        src={video}
+                        controls
+                        autoPlay
+                        className="w-full h-full object-cover"
+                        playsInline
+                      />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key={imgIndex}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="relative w-full h-full"
+                    >
+                      <Image
+                        src={images[imgIndex]}
+                        alt={`${product.name} - 图片 ${imgIndex + 1}`}
+                        fill
+                        className="object-cover"
+                        priority
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Left/Right arrows */}
+                <button
+                  onClick={prevImage}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/60 rounded-full flex items-center justify-center text-white hover:bg-black/80 transition-colors"
+                >
+                  ←
+                </button>
+                <button
+                  onClick={nextImage}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/60 rounded-full flex items-center justify-center text-white hover:bg-black/80 transition-colors"
+                >
+                  →
+                </button>
+
+                {/* Video toggle button */}
+                {video && (
+                  <button
+                    onClick={() => setShowVideo(!showVideo)}
+                    className={`absolute bottom-3 right-3 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                      showVideo ? 'bg-white text-black' : 'bg-black/60 text-white hover:bg-black/80'
+                    }`}
+                  >
+                    {showVideo ? '查看图片' : '▶ 视频'}
+                  </button>
+                )}
+              </div>
+
+              {/* Thumbnail dots */}
+              <div className="flex items-center justify-center gap-2 mb-4">
+                {images.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => { setImgIndex(i); setShowVideo(false) }}
+                    className={`w-12 h-12 rounded-lg overflow-hidden border-2 transition-all ${
+                      i === imgIndex && !showVideo ? 'border-white' : 'border-transparent opacity-50 hover:opacity-80'
+                    }`}
+                  >
+                    <Image
+                      src={img}
+                      alt={`缩略图 ${i + 1}`}
+                      width={48}
+                      height={48}
+                      className="object-cover w-full h-full"
+                    />
+                  </button>
+                ))}
+                {video && (
+                  <button
+                    onClick={() => setShowVideo(true)}
+                    className={`w-12 h-12 rounded-lg overflow-hidden border-2 transition-all flex items-center justify-center bg-neutral-800 ${
+                      showVideo ? 'border-white' : 'border-transparent opacity-50 hover:opacity-80'
+                    }`}
+                  >
+                    <span className="text-lg">▶</span>
+                  </button>
+                )}
+              </div>
+
+              <div className="text-sm text-neutral-500">
+                {showVideo ? '视频演示' : `${imgIndex + 1} / ${images.length}`}
+              </div>
+            </>
+          ) : (
+            <div className="w-full aspect-square max-w-lg mx-auto mb-8 rounded-2xl bg-neutral-800 flex items-center justify-center text-8xl">
+              🎾
+            </div>
+          )}
+
+          <motion.div
+            key={product.id + '-info'}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">{product.name}</h1>
+            <p className="text-lg text-neutral-400 mb-6">{product.description}</p>
+            <div className="text-3xl font-bold text-blue-400">¥{product.price}</div>
+          </motion.div>
+        </div>
       </section>
 
       {/* Screen 2: Features */}
@@ -90,20 +225,6 @@ export default function ProductSwitcher() {
           </a>
         </div>
       </section>
-
-      {/* Product switcher dots */}
-      <div className="fixed right-6 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-50">
-        {PRODUCTS.map((p, i) => (
-          <button
-            key={p.id}
-            onClick={() => setActive(i)}
-            className={`w-2 h-2 rounded-full transition-all ${
-              i === active ? 'bg-white scale-150' : 'bg-neutral-600 hover:bg-neutral-400'
-            }`}
-            aria-label={p.name}
-          />
-        ))}
-      </div>
     </div>
   )
 }
