@@ -60,12 +60,12 @@ export default function ProductSwitcher() {
 
       {/* Screen 1: Image Gallery */}
       <section className="min-h-screen flex items-center justify-center relative pt-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-900/95 to-black/95" />
+        <div className="absolute inset-0 bg-neutral-950/25" />
         <AnimatePresence mode="wait">
           <motion.div
             key={product.id + '-bg'}
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.15 }}
+            animate={{ opacity: 0.6 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6 }}
             className="absolute inset-0 z-0"
