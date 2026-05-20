@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PRODUCTS } from '@/lib/constants'
+import PinduoduoModal from '@/components/PinduoduoModal'
 
 const productImages: Record<string, string[]> = {
   'tennis-ball-picker': [],
@@ -24,6 +25,7 @@ export default function ProductSwitcher() {
   const [active, setActive] = useState(1) // default to pingpong since it has images
   const [imgIndex, setImgIndex] = useState(0)
   const [showVideo, setShowVideo] = useState(false)
+  const [showPinduoduo, setShowPinduoduo] = useState(false)
 
   const product = PRODUCTS[active]
   const images = productImages[product.id]
@@ -217,14 +219,24 @@ export default function ProductSwitcher() {
         <div className="text-center">
           <h2 className="text-3xl font-bold mb-4">准备好提升训练效率了吗？</h2>
           <p className="text-neutral-400 mb-8">{product.name} — ¥{product.price}</p>
-          <a
-            href={`/order?product=${product.id}`}
-            className="inline-block px-10 py-4 bg-blue-500 text-white rounded-full font-medium hover:bg-blue-400 transition-colors text-lg"
-          >
-            立即购买
-          </a>
+          <div className="flex gap-4 justify-center">
+            <a
+              href={`/order?product=${product.id}`}
+              className="inline-block px-10 py-4 bg-blue-500 text-white rounded-full font-medium hover:bg-blue-400 transition-colors text-lg"
+            >
+              官网购买
+            </a>
+            <button
+              onClick={() => setShowPinduoduo(true)}
+              className="inline-block px-10 py-4 bg-red-600 text-white rounded-full font-medium hover:bg-red-500 transition-colors text-lg"
+            >
+              拼多多购买
+            </button>
+          </div>
         </div>
       </section>
+
+      {showPinduoduo && <PinduoduoModal onClose={() => setShowPinduoduo(false)} />}
     </div>
   )
 }

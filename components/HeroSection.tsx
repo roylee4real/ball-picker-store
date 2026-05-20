@@ -32,7 +32,7 @@ export default function HeroSection() {
             href="/order"
             className="px-8 py-3 border border-neutral-600 text-white rounded-full font-medium hover:border-white transition-colors"
           >
-            立即购买
+            官网购买
           </Link>
         </div>
       </motion.div>
